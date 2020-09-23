@@ -3,8 +3,8 @@ project: deblur_gan
 experiment_desc: fpn
 
 train:
-  files_a: &FILES_A /data/train/**/blur/*.png
-  files_b: &FILES_B /data/train/**/sharp/*.png
+  files_a: &FILES_A data/train/**/blur/*.png
+  files_b: &FILES_B data/train/**/sharp/*.png
   size: &SIZE 256
   crop: random
   preload: &PRELOAD false
