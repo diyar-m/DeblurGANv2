@@ -3,8 +3,8 @@ project: deblur_gan
 experiment_desc: fpn
 
 train:
-  files_a: &FILES_A /datasets/my_dataset/**/*.jpg
-  files_b: *FILES_A
+  files_a: &FILES_A /data/train/**/blur/*.png
+  files_b: &FILES_B /data/train/**/sharp/*.png
   size: &SIZE 256
   crop: random
   preload: &PRELOAD false
@@ -29,7 +29,7 @@ train:
 
 val:
   files_a: *FILES_A
-  files_b: *FILES_A
+  files_b: *FILES_B
   size: *SIZE
   scope: geometric
   crop: center
@@ -41,7 +41,7 @@ val:
 phase: train
 warmup_num: 3
 model:
-  g_name: fpn_inception
+  g_name: fpn_mobilenet
   blocks: 9
   d_name: double_gan # may be no_gan, patch_gan, double_gan, multi_scale
   d_layers: 3
