@@ -117,7 +117,26 @@ class PairedDataset(Dataset):
     @staticmethod
     def from_config(config):
         config = deepcopy(config)
-        files_a, files_b = map(lambda x: sorted(glob(config[x], recursive=True)), ('files_a', 'files_b'))
+        files_a, files_b = [], []
+
+        files_a += glob("data/TRAIN/GOPRO_Large/*/blur/*.png")
+        files_b += glob("data/TRAIN/GOPRO_Large/*/sharp/*.png")
+
+        files_a += glob("data/TRAIN/GOPRO_Large/*/blur_gamma/*.png")
+        files_b += glob("data/TRAIN/GOPRO_Large/*/sharp/*.png")
+
+        files_a += glob("data/TRAIN/quantitative_datasets/*/input/*.jpg")
+        files_b += glob("data/TRAIN/quantitative_datasets/*/GT/*.jpg")
+
+        for i in range(4):
+            files_a += sorted(glob("data/TRAIN/synthetic_dataset/uniform/*0{}.png".format(i+1)))
+            files_b += sorted(glob("data/TRAIN/synthetic_dataset/ground_truth/*.png"))
+
+            files_a += sorted(glob("data/TRAIN/synthetic_dataset/nonuniform/*0{}.png".format(i + 1)))
+            files_b += sorted(glob("data/TRAIN/synthetic_dataset/ground_truth/*.png"))
+
+
+        # files_a, files_b = map(lambda x: sorted(glob(config[x], recursive=True)), ('files_a', 'files_b'))
         transform_fn = aug.get_transforms(size=config['size'], scope=config['scope'], crop=config['crop'])
         normalize_fn = aug.get_normalize()
         corrupt_fn = aug.get_corrupt_function(config['corrupt'])
