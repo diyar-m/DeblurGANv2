@@ -8,6 +8,7 @@ import tqdm
 import yaml
 from joblib import cpu_count
 from torch.utils.data import DataLoader
+from torch.utils.tensorboard import SummaryWriter
 
 from adversarial_trainer import GANFactory
 from dataset import PairedDataset
@@ -44,10 +45,17 @@ class Trainer:
             if self.metric_counter.update_best_model():
                 torch.save({
                     'model': self.netG.state_dict()
-                }, 'best_{}.h5'.format(self.config['experiment_desc']))
+                }, 'best_G_{}.h5'.format(self.config['experiment_desc']))
+                torch.save({
+                    'model': self.netD.state_dict()
+                }, 'best_D_{}.h5'.format(self.config['experiment_desc']))
             torch.save({
                 'model': self.netG.state_dict()
-            }, 'last_{}.h5'.format(self.config['experiment_desc']))
+            }, 'last_G_{}.h5'.format(self.config['experiment_desc']))
+            torch.save({
+                'model': self.netD.state_dict()
+            }, 'last_D_{}.h5'.format(self.config['experiment_desc']))
+
             print(self.metric_counter.loss_message())
             logging.debug("Experiment Name: %s, Epoch: %d, Loss: %s" % (
                 self.config['experiment_desc'], epoch, self.metric_counter.loss_message()))
@@ -80,8 +88,8 @@ class Trainer:
             i += 1
             if i > epoch_size:
                 break
+            self.metric_counter.write_to_tensorboard(epoch)
         tq.close()
-        self.metric_counter.write_to_tensorboard(epoch)
 
     def _validate(self, epoch):
         self.metric_counter.clear()
