@@ -111,6 +111,7 @@ class Trainer:
             i += 1
             if i > epoch_size:
                 break
+            self.metric_counter.write_to_tensorboard(epoch * epoch_size + i)
         tq.close()
         self.metric_counter.write_to_tensorboard(epoch, validation=True)
 
