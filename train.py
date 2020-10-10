@@ -47,14 +47,20 @@ class Trainer:
                     'model': self.netG.state_dict()
                 }, 'best_G_{}.h5'.format(self.config['experiment_desc']))
                 torch.save({
-                    'model': self.netD.state_dict()
-                }, 'best_D_{}.h5'.format(self.config['experiment_desc']))
+                    'model': self.adv_trainer.patch_d.state_dict()
+                }, 'best_patch_d_{}.h5'.format(self.config['experiment_desc']))
+                torch.save({
+                    'model': self.adv_trainer.full_d.state_dict()
+                }, 'best_full_d_{}.h5'.format(self.config['experiment_desc']))
             torch.save({
                 'model': self.netG.state_dict()
             }, 'last_G_{}.h5'.format(self.config['experiment_desc']))
             torch.save({
-                'model': self.netD.state_dict()
-            }, 'last_D_{}.h5'.format(self.config['experiment_desc']))
+                'model': self.adv_trainer.patch_d.state_dict()
+            }, 'last_patch_d_{}.h5'.format(self.config['experiment_desc']))
+            torch.save({
+                'model': self.adv_trainer.full_d.state_dict()
+            }, 'last_full_d_{}.h5'.format(self.config['experiment_desc']))
 
             print(self.metric_counter.loss_message())
             logging.debug("Experiment Name: %s, Epoch: %d, Loss: %s" % (
@@ -166,9 +172,9 @@ class Trainer:
 
     def _init_params(self):
         self.criterionG, criterionD = get_loss(self.config['model'])
-        self.netG, self.netD = get_nets(self.config['model'])
+        self.netG, netD = get_nets(self.config['model'])
         self.netG.cuda()
-        self.adv_trainer = self._get_adversarial_trainer(self.config['model']['d_name'], self.netD, criterionD)
+        self.adv_trainer = self._get_adversarial_trainer(self.config['model']['d_name'], netD, criterionD)
         self.model = get_model(self.config['model'])
         self.optimizer_G = self._get_optim(filter(lambda p: p.requires_grad, self.netG.parameters()))
         self.optimizer_D = self._get_optim(self.adv_trainer.get_params())
