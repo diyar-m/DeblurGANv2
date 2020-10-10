@@ -95,6 +95,7 @@ class Trainer:
             self.metric_counter.write_to_tensorboard(epoch * epoch_size + i)
             if i > epoch_size:
                 break
+            del inputs, targets, outputs
         tq.close()
 
     def _validate(self, epoch):
@@ -117,6 +118,8 @@ class Trainer:
             i += 1
             if i > epoch_size:
                 break
+        del inputs, targets, outputs
+
         tq.close()
         self.metric_counter.write_to_tensorboard(epoch, validation=True)
 
