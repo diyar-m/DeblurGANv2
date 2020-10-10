@@ -92,9 +92,9 @@ class Trainer:
             if not i:
                 self.metric_counter.add_image(img_for_vis, tag='train')
             i += 1
+            self.metric_counter.write_to_tensorboard(epoch * epoch_size + i)
             if i > epoch_size:
                 break
-            self.metric_counter.write_to_tensorboard(epoch)
         tq.close()
 
     def _validate(self, epoch):
