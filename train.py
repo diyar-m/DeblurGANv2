@@ -168,7 +168,7 @@ class Trainer:
         self.criterionG, criterionD = get_loss(self.config['model'])
         self.netG, self.netD = get_nets(self.config['model'])
         self.netG.cuda()
-        self.adv_trainer = self._get_adversarial_trainer(self.config['model']['d_name'], netD, criterionD)
+        self.adv_trainer = self._get_adversarial_trainer(self.config['model']['d_name'], self.netD, criterionD)
         self.model = get_model(self.config['model'])
         self.optimizer_G = self._get_optim(filter(lambda p: p.requires_grad, self.netG.parameters()))
         self.optimizer_D = self._get_optim(self.adv_trainer.get_params())
