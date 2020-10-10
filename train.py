@@ -27,7 +27,7 @@ class Trainer:
         self.train_dataset = train
         self.val_dataset = val
         self.adv_lambda = config['model']['adv_lambda']
-        self.metric_counter = MetricCounter(config['experiment_desc'])
+        self.metric_counter = MetricCounter()
         self.warmup_epochs = config['warmup_num']
 
     def train(self):
