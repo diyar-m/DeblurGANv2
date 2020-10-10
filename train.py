@@ -38,7 +38,9 @@ class Trainer:
                 self.optimizer_G = self._get_optim(self.netG.parameters())
                 self.scheduler_G = self._get_scheduler(self.optimizer_G)
             self._run_epoch(epoch)
+            torch.cuda.empty_cache()
             self._validate(epoch)
+            torch.cuda.empty_cache()
             self.scheduler_G.step()
             self.scheduler_D.step()
 
