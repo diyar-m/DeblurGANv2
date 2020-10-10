@@ -85,7 +85,7 @@ class Trainer:
             loss_G = loss_content + self.adv_lambda * loss_adv
             loss_G.backward()
             self.optimizer_G.step()
-            self.metric_counter.add_losses(loss_G.item(), loss_content.item(), loss_D)
+            self.metric_counter.add_losses(loss_G.detach().item(), loss_content.detach().item(), loss_D)
             curr_psnr, curr_ssim, img_for_vis = self.model.get_images_and_metrics(inputs, outputs, targets)
             self.metric_counter.add_metrics(curr_psnr, curr_ssim)
             tq.set_postfix(loss=self.metric_counter.loss_message())
@@ -95,6 +95,7 @@ class Trainer:
             self.metric_counter.write_to_tensorboard(epoch * epoch_size + i)
             if i > epoch_size:
                 break
+            del inputs, targets, outputs
         tq.close()
 
     def _validate(self, epoch):
@@ -110,7 +111,7 @@ class Trainer:
             loss_content = self.criterionG(outputs, targets)
             loss_adv = self.adv_trainer.loss_g(outputs, targets)
             loss_G = loss_content + self.adv_lambda * loss_adv
-            self.metric_counter.add_losses(loss_G.item(), loss_content.item())
+            self.metric_counter.add_losses(loss_G.detach().item(), loss_content.detach().item())
             curr_psnr, curr_ssim, img_for_vis = self.model.get_images_and_metrics(inputs, outputs, targets)
             self.metric_counter.add_metrics(curr_psnr, curr_ssim)
             if not i:
@@ -118,6 +119,7 @@ class Trainer:
             i += 1
             if i > epoch_size:
                 break
+            del inputs, targets, outputs
 
         tq.close()
         self.metric_counter.write_to_tensorboard(epoch, validation=True)
@@ -129,7 +131,7 @@ class Trainer:
         loss_D = self.adv_lambda * self.adv_trainer.loss_d(outputs, targets)
         loss_D.backward(retain_graph=True)
         self.optimizer_D.step()
-        return loss_D.item()
+        return loss_D.detach().item()
 
     def _get_optim(self, params):
         if self.config['optimizer']['name'] == 'adam':
