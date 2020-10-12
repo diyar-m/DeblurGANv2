@@ -51,9 +51,20 @@ class Trainer:
                 torch.save({
                     'model': self.adv_trainer.patch_d.state_dict()
                 }, 'best_patch_d_{}.h5'.format(self.config['experiment_desc']))
+
                 torch.save({
-                    'model': self.adv_trainer.full_d.state_dict()
-                }, 'best_full_d_{}.h5'.format(self.config['experiment_desc']))
+                    'model': self.scheduler_G.state_dict()
+                }, 'best_scheduler_G_{}.h5'.format(self.config['experiment_desc']))
+                torch.save({
+                    'model': self.scheduler_D.state_dict()
+                }, 'best_scheduler_D_{}.h5'.format(self.config['experiment_desc']))
+                torch.save({
+                    'model': self.optimizer_G.state_dict()
+                }, 'best_optimizer_G_{}.h5'.format(self.config['experiment_desc']))
+                torch.save({
+                    'model': self.optimizer_D.state_dict()
+                }, 'best_optimizer_D_{}.h5'.format(self.config['experiment_desc']))
+
             torch.save({
                 'model': self.netG.state_dict()
             }, 'last_G_{}.h5'.format(self.config['experiment_desc']))
@@ -63,6 +74,18 @@ class Trainer:
             torch.save({
                 'model': self.adv_trainer.full_d.state_dict()
             }, 'last_full_d_{}.h5'.format(self.config['experiment_desc']))
+            torch.save({
+                'model': self.scheduler_G.state_dict()
+            }, 'last_scheduler_G_{}.h5'.format(self.config['experiment_desc']))
+            torch.save({
+                'model': self.scheduler_D.state_dict()
+            }, 'last_scheduler_D_{}.h5'.format(self.config['experiment_desc']))
+            torch.save({
+                'model': self.optimizer_G.state_dict()
+            }, 'last_optimizer_G_{}.h5'.format(self.config['experiment_desc']))
+            torch.save({
+                'model': self.optimizer_D.state_dict()
+            }, 'last_optimizer_D_{}.h5'.format(self.config['experiment_desc']))
 
             print(self.metric_counter.loss_message())
             logging.debug("Experiment Name: %s, Epoch: %d, Loss: %s" % (
@@ -79,6 +102,7 @@ class Trainer:
         i = 0
         for data in tq:
             inputs, targets = self.model.get_input(data)
+            inputs, targets = inputs.cuda(), targets.cuda()
             outputs = self.netG(inputs)
             loss_D = self._update_d(outputs, targets)
             self.optimizer_G.zero_grad()
@@ -108,6 +132,7 @@ class Trainer:
         i = 0
         for data in tq:
             inputs, targets = self.model.get_input(data)
+            inputs, targets = inputs.cuda(), targets.cuda()
             outputs = self.netG(inputs)
             loss_content = self.criterionG(outputs, targets)
             loss_adv = self.adv_trainer.loss_g(outputs, targets)
@@ -191,6 +216,7 @@ if __name__ == '__main__':
         config = yaml.load(f)
 
     batch_size = config.pop('batch_size')
+    torch.manual_seed(0)
     get_dataloader = partial(DataLoader, batch_size=batch_size, num_workers=cpu_count(), shuffle=True, drop_last=True)
 
     datasets = map(config.pop, ('train', 'val'))

@@ -13,7 +13,7 @@ class DeblurModel(nn.Module):
         img = data['a']
         inputs = img
         targets = data['b']
-        inputs, targets = inputs.cuda(), targets.cuda()
+        # inputs, targets = inputs.cuda(), targets.cuda()
         return inputs, targets
 
     def tensor2im(self, image_tensor, imtype=np.uint8):
