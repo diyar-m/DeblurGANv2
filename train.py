@@ -30,9 +30,18 @@ class Trainer:
         self.metric_counter = MetricCounter()
         self.warmup_epochs = config['warmup_num']
 
-    def train(self):
+    def train(self, resume_train=False):
         self._init_params()
-        for epoch in range(0, config['num_epochs']):
+
+        self.netG.load_state_dict(torch.load('last_G_{}.h5'.format(self.config['experiment_desc'])))
+        self.adv_trainer.patch_d.load_state_dict(torch.load('last_patch_d_{}.h5'.format(self.config['experiment_desc'])))
+        self.adv_trainer.full_d.load_state_dict(torch.load('last_full_d_{}.h5'.format(self.config['experiment_desc'])))
+        self.scheduler_G.load_state_dict(torch.load('last_scheduler_G_{}.h5'.format(self.config['experiment_desc'])))
+        self.scheduler_D.load_state_dict(torch.load('last_scheduler_D_{}.h5'.format(self.config['experiment_desc'])))
+        self.optimizer_G.load_state_dict(torch.load('last_optimizer_G_{}.h5'.format(self.config['experiment_desc'])))
+        self.optimizer_D.load_state_dict(torch.load('last_optimizer_D_{}.h5'.format(self.config['experiment_desc'])))
+        start_epoch = 0 + 29
+        for epoch in range(start_epoch, config['num_epochs']):
             if (epoch == self.warmup_epochs) and not (self.warmup_epochs == 0):
                 self.netG.module.unfreeze()
                 self.optimizer_G = self._get_optim(self.netG.parameters())
@@ -223,4 +232,4 @@ if __name__ == '__main__':
     datasets = map(PairedDataset.from_config, datasets)
     train, val = map(get_dataloader, datasets)
     trainer = Trainer(config, train=train, val=val)
-    trainer.train()
+    trainer.train(resume_train=True)
