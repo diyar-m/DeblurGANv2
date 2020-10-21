@@ -173,29 +173,37 @@ class Trainer:
         self.optimizer_D.step()
         return loss_D.detach().item()
 
-    def _get_optim(self, params):
+    def _get_optim(self, params, net_type):
+        if net_type == 'G':
+            lr = self.config['optimizer']['lr_G']
+        else:
+            lr = self.config['optimizer']['lr_D']
         if self.config['optimizer']['name'] == 'adam':
-            optimizer = optim.Adam(params, lr=self.config['optimizer']['lr'])
+            optimizer = optim.Adam(params, lr=lr)
         elif self.config['optimizer']['name'] == 'sgd':
-            optimizer = optim.SGD(params, lr=self.config['optimizer']['lr'])
+            optimizer = optim.SGD(params, lr=lr)
         elif self.config['optimizer']['name'] == 'adadelta':
-            optimizer = optim.Adadelta(params, lr=self.config['optimizer']['lr'])
+            optimizer = optim.Adadelta(params, lr=lr)
         else:
             raise ValueError("Optimizer [%s] not recognized." % self.config['optimizer']['name'])
         return optimizer
 
-    def _get_scheduler(self, optimizer):
+    def _get_scheduler(self, optimizer, net_type):
+        if net_type == 'G':
+            min_lr = self.config['scheduler']['min_lr_G']
+        else:
+            min_lr = self.config['scheduler']['min_lr_D']
         if self.config['scheduler']['name'] == 'plateau':
             scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer,
                                                              mode='min',
                                                              patience=self.config['scheduler']['patience'],
                                                              factor=self.config['scheduler']['factor'],
-                                                             min_lr=self.config['scheduler']['min_lr'])
+                                                             min_lr=min_lr)
         elif self.config['optimizer']['name'] == 'sgdr':
             scheduler = WarmRestart(optimizer)
         elif self.config['scheduler']['name'] == 'linear':
             scheduler = LinearDecay(optimizer,
-                                    min_lr=self.config['scheduler']['min_lr'],
+                                    min_lr=min_lr,
                                     num_epochs=self.config['num_epochs'],
                                     start_epoch=self.config['scheduler']['start_epoch'])
         else:
@@ -219,10 +227,10 @@ class Trainer:
         self.netG.cuda()
         self.adv_trainer = self._get_adversarial_trainer(self.config['model']['d_name'], netD, criterionD)
         self.model = get_model(self.config['model'])
-        self.optimizer_G = self._get_optim(filter(lambda p: p.requires_grad, self.netG.parameters()))
-        self.optimizer_D = self._get_optim(self.adv_trainer.get_params())
-        self.scheduler_G = self._get_scheduler(self.optimizer_G)
-        self.scheduler_D = self._get_scheduler(self.optimizer_D)
+        self.optimizer_G = self._get_optim(filter(lambda p: p.requires_grad, self.netG.parameters()), 'G')
+        self.optimizer_D = self._get_optim(self.adv_trainer.get_params(), 'D')
+        self.scheduler_G = self._get_scheduler(self.optimizer_G, 'G')
+        self.scheduler_D = self._get_scheduler(self.optimizer_D, 'D')
 
 
 if __name__ == '__main__':
@@ -237,4 +245,4 @@ if __name__ == '__main__':
     datasets = map(PairedDataset.from_config, datasets)
     train, val = map(get_dataloader, datasets)
     trainer = Trainer(config, train=train, val=val)
-    trainer.train(resume_train=True)
+    trainer.train(resume_train=False)
