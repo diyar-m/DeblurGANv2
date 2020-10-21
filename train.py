@@ -49,8 +49,8 @@ class Trainer:
         for epoch in range(start_epoch, config['num_epochs']):
             if (epoch == self.warmup_epochs) and not (self.warmup_epochs == 0):
                 self.netG.module.unfreeze()
-                self.optimizer_G = self._get_optim(self.netG.parameters())
-                self.scheduler_G = self._get_scheduler(self.optimizer_G)
+                self.optimizer_G = self._get_optim(self.netG.parameters(), 'G')
+                self.scheduler_G = self._get_scheduler(self.optimizer_G, 'G')
             self._run_epoch(epoch)
             torch.cuda.empty_cache()
             self._validate(epoch)
