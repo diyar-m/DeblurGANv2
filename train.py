@@ -34,7 +34,7 @@ class Trainer:
         self._init_params()
         start_epoch = 0
         if resume_train:
-            start_epoch += 29
+            start_epoch += self.config['train']['resume_epoch']
             if start_epoch > self.warmup_epochs:
                 self.netG.module.unfreeze()
                 self.optimizer_G = self._get_optim(self.netG.parameters())
@@ -245,4 +245,4 @@ if __name__ == '__main__':
     datasets = map(PairedDataset.from_config, datasets)
     train, val = map(get_dataloader, datasets)
     trainer = Trainer(config, train=train, val=val)
-    trainer.train(resume_train=False)
+    trainer.train(resume_train=config['train']['resume_training'])
