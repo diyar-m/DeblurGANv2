@@ -2,9 +2,11 @@
 project: deblur_gan
 experiment_desc: fpn
 
-train:
+resume:
   resume_training: no
   resume_epoch: 0
+
+train:
   files_a: &FILES_A data/train/**/blur/*.png
   files_b: &FILES_B data/train/**/sharp/*.png
   size: &SIZE 256
@@ -62,11 +64,11 @@ image_size: [256, 256]
 
 optimizer:
   name: adam
-  lr_G: 0.0001
-  lr_D: 0.0005
+  lr_G: 0.001
+  lr_D: 0.005
 
 scheduler:
   name: linear
   start_epoch: 50
-  min_lr_G: 0.0000001
-  min_lr_D: 0.0000005
+  min_lr_G: 0.000001
+  min_lr_D: 0.000005
