@@ -50,25 +50,25 @@ model:
   d_name: double_gan # may be no_gan, patch_gan, double_gan, multi_scale
   d_layers: 3
   content_loss: perceptual
-  adv_lambda: 0.001
-  disc_loss: wgan-gp
+  adv_lambda: 0.01
+  disc_loss: ragan-ls
   learn_residual: True
   norm_layer: instance
   dropout: True
 
-num_epochs: 200
+num_epochs: 300
 train_batches_per_epoch: 250
 val_batches_per_epoch: 25
-batch_size: 4
+batch_size: 6
 image_size: [256, 256]
 
 optimizer:
   name: adam
-  lr_G: 0.001
-  lr_D: 0.005
+  lr_G: 0.0001
+  lr_D: 0.0005
 
 scheduler:
   name: linear
-  start_epoch: 50
-  min_lr_G: 0.000001
-  min_lr_D: 0.000005
+  start_epoch: 150
+  min_lr_G: 0.0000001
+  min_lr_D: 0.0000005
