@@ -6,6 +6,7 @@ import torch
 import torch.optim as optim
 import tqdm
 import yaml
+import numpy as np
 from joblib import cpu_count
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
@@ -45,6 +46,7 @@ class Trainer:
             self.scheduler_G.load_state_dict(torch.load('last_scheduler_G_fpn.h5')['model'])
             self.scheduler_D.load_state_dict(torch.load('last_scheduler_D_fpn.h5')['model'])
             self.optimizer_G.load_state_dict(torch.load('last_optimizer_G_fpn.h5')['model'])
+            self.optimizer_D.load_state_dict(torch.load('last_optimizer_D_fpn.h5')['model'])
             self.optimizer_D.load_state_dict(torch.load('last_optimizer_D_fpn.h5')['model'])
         for epoch in range(start_epoch, config['num_epochs']):
             if (epoch == self.warmup_epochs) and not (self.warmup_epochs == 0):
@@ -232,6 +234,12 @@ class Trainer:
         self.scheduler_G = self._get_scheduler(self.optimizer_G, 'G')
         self.scheduler_D = self._get_scheduler(self.optimizer_D, 'D')
 
+def set_seed(seed):
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    np.random.seed(seed)
 
 if __name__ == '__main__':
     with open('config/config.yaml', 'r') as f:

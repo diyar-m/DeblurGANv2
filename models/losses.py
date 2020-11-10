@@ -47,8 +47,8 @@ class PerceptualLoss():
     def get_loss(self, fakeIm, realIm):
         fakeIm = (fakeIm + 1) / 2.0
         realIm = (realIm + 1) / 2.0
-        fakeIm[0, :, :, :] = self.transform(fakeIm[0, :, :, :])
-        realIm[0, :, :, :] = self.transform(realIm[0, :, :, :])
+        fakeIm[:, :, :, :] = self.transform(fakeIm[:, :, :, :])
+        realIm[:, :, :, :] = self.transform(realIm[:, :, :, :])
         f_fake = self.contentFunc.forward(fakeIm)
         f_real = self.contentFunc.forward(realIm)
         f_real_no_grad = f_real.detach()
