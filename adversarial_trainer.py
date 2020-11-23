@@ -83,12 +83,13 @@ class DoubleGAN(GANTrainer):
         self.full_d = net_d['full'].cuda()
         self.full_criterion = copy.deepcopy(criterion)
 
-    def loss_d(self, pred, gt):
-        return (self.criterion(self.patch_d, pred, gt) + self.full_criterion(self.full_d, pred, gt)) / 2
+    def loss_d(self, inputs, pred, gt):
+        return (self.criterion(self.patch_d, inputs, pred, gt) +
+                self.full_criterion(self.full_d, inputs, pred, gt)) / 2
 
-    def loss_g(self, pred, gt):
-        return (self.criterion.get_g_loss(self.patch_d, pred, gt) + self.full_criterion.get_g_loss(self.full_d, pred,
-                                                                                                  gt)) / 2
+    def loss_g(self, inputs, pred, gt):
+        return (self.criterion.get_g_loss(self.patch_d, inputs, pred, gt) +
+                self.full_criterion.get_g_loss(self.full_d, inputs, pred, gt)) / 2
 
     def get_params(self):
         return list(self.patch_d.parameters()) + list(self.full_d.parameters())

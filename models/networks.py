@@ -215,7 +215,7 @@ class MultiScaleDiscriminator(nn.Module):
 
 # Defines the PatchGAN discriminator with the specified arguments.
 class NLayerDiscriminator(nn.Module):
-    def __init__(self, input_nc=3, ndf=64, n_layers=3, norm_layer=nn.BatchNorm2d, use_sigmoid=False, use_parallel=True):
+    def __init__(self, input_nc=6, ndf=64, n_layers=3, norm_layer=nn.BatchNorm2d, use_sigmoid=False, use_parallel=True):
         super(NLayerDiscriminator, self).__init__()
         self.use_parallel = use_parallel
         if type(norm_layer) == functools.partial:

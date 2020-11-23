@@ -184,27 +184,29 @@ class RelativisticDiscLossLS(nn.Module):
         self.fake_pool = ImagePool(50)  # create image buffer to store previously generated images
         self.real_pool = ImagePool(50)
 
-    def get_g_loss(self, net, fakeB, realB):
+    def get_g_loss(self, net, realA, fakeB, realB):
         # First, G(A) should fake the discriminator
-        self.pred_fake = net.forward(fakeB)
+        self.pred_fake = net.forward(torch.cat((realA, fakeB), 1))
 
         # Real
-        self.pred_real = net.forward(realB)
+        self.pred_real = net.forward(torch.cat((realA, realB), 1))
         errG = (torch.mean((self.pred_real - torch.mean(self.fake_pool.query()) + 1) ** 2) +
                 torch.mean((self.pred_fake - torch.mean(self.real_pool.query()) - 1) ** 2)) / 2
         return errG
 
-    def get_loss(self, net, fakeB, realB):
+    def get_loss(self, net, realA, fakeB, realB):
         # Fake
         # stop backprop to the generator by detaching fake_B
         # Generated Image Disc Output should be close to zero
         self.fake_B = fakeB.detach()
+        self.fake_AB = torch.cat((realA, fakeB), 1).detach()
         self.real_B = realB
-        self.pred_fake = net.forward(fakeB.detach())
+        self.real_AB = torch.cat((realA, realB), 1)
+        self.pred_fake = net.forward(self.fake_AB.detach())
         self.fake_pool.add(self.pred_fake)
 
         # Real
-        self.pred_real = net.forward(realB)
+        self.pred_real = net.forward(self.real_AB)
         self.real_pool.add(self.pred_real)
 
         # Combined loss
@@ -212,8 +214,8 @@ class RelativisticDiscLossLS(nn.Module):
                        torch.mean((self.pred_fake - torch.mean(self.real_pool.query()) + 1) ** 2)) / 2
         return self.loss_D
 
-    def __call__(self, net, fakeB, realB):
-        return self.get_loss(net, fakeB, realB)
+    def __call__(self, net, inputs, fakeB, realB):
+        return self.get_loss(net, inputs, fakeB, realB)
 
 
 class DiscLossLS(DiscLoss):
