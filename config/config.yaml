@@ -58,7 +58,7 @@ model:
 
 num_epochs: 300
 train_batches_per_epoch: 250
-val_batches_per_epoch: 25
+val_batches_per_epoch: 50
 batch_size: 6
 image_size: [256, 256]
 
@@ -69,6 +69,6 @@ optimizer:
 
 scheduler:
   name: linear
-  start_epoch: 150
+  start_epoch: 20
   min_lr_G: 0.0000001
   min_lr_D: 0.0000005
