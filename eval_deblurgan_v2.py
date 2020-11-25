@@ -29,7 +29,7 @@ class Validator:
 
     def validate(self, resume_train=False):
         self._init_params()
-        self.netG.load_state_dict(torch.load(self.config)['model'])
+        self.netG.load_state_dict(torch.load(self.config['model_path'])['model'])
         self._validate()
         torch.cuda.empty_cache()
 
@@ -39,6 +39,7 @@ class Validator:
         tq = tqdm.tqdm(self.val_dataset, total=epoch_size)
         tq.set_description('Validation')
         i = 0
+
         for data in tq:
             inputs, targets = self.model.get_input(data)
             inputs, targets = inputs.cuda(), targets.cuda()
