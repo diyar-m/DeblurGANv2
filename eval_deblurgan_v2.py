@@ -50,8 +50,6 @@ class Validator:
             sum_psnr += curr_psnr
             sum_ssim += curr_ssim
             sum_lens += len(inputs)
-            if not i:
-                print(len(inputs))
             self.metric_counter.add_metrics(curr_psnr, curr_ssim)
             if not i%50:
                 self.metric_counter.add_image(img_for_vis, tag='val')
@@ -62,6 +60,9 @@ class Validator:
             self.metric_counter.write_to_tensorboard(i, validation=True)
 
         tq.close()
+        print("SSIM ", sum_ssim / sum_lens)
+        print("PSNR ", sum_psnr / sum_lens)
+        print("Dataset Length ", sum_lens)
 
     def _init_params(self):
         self.netG, _ = get_nets(self.config['model'])
