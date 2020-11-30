@@ -83,8 +83,9 @@ if __name__ == '__main__':
     torch.manual_seed(0)
     get_dataloader = partial(DataLoader, batch_size=batch_size, num_workers=cpu_count(), shuffle=True, drop_last=True)
 
-    datasets = map(config.pop, ('train', 'val'))
+    datasets = map(config.get, ('train', 'val'))
     datasets = map(PairedDataset.from_config, datasets)
     train, val = map(get_dataloader, datasets)
     validator = Validator(config, val=val)
+
     validator.validate()
