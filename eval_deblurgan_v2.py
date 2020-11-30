@@ -33,13 +33,15 @@ class Validator:
         self._validate()
         torch.cuda.empty_cache()
 
-    def _validate(self, epoch):
+    def _validate(self):
         self.metric_counter.clear()
         epoch_size = config.get('val_batches_per_epoch') or len(self.val_dataset)
         tq = tqdm.tqdm(self.val_dataset, total=epoch_size)
         tq.set_description('Validation')
+        sum_psnr = 0
+        sum_ssim = 0
+        sum_lens = 0
         i = 0
-
         for data in tq:
             inputs, targets = self.model.get_input(data)
             inputs, targets = inputs.cuda(), targets.cuda()
@@ -53,15 +55,15 @@ class Validator:
             print("curr_ssim", curr_ssim)
             break
             self.metric_counter.add_metrics(curr_psnr, curr_ssim)
-            if not i:
+            if not i%50:
                 self.metric_counter.add_image(img_for_vis, tag='val')
             i += 1
             if i > epoch_size:
                 break
             del inputs, targets, outputs
+            self.metric_counter.write_to_tensorboard(i, validation=True)
 
         tq.close()
-        self.metric_counter.write_to_tensorboard(epoch, validation=True)
 
     def _init_params(self):
         self.netG, _ = get_nets(self.config['model'])
