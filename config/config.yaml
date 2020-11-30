@@ -53,12 +53,12 @@ val:
 
 phase: train
 warmup_num: 3
-model: fpn_inception.h5
+model:
   g_name: fpn_inception
   blocks: 9
   d_name: double_gan # may be no_gan, patch_gan, double_gan, multi_scale
   d_layers: 3
-  content_loss: perceptual
+  content_loss: perceptualfpn_inception.h5
   adv_lambda: 0.01
   disc_loss: ragan-ls
   learn_residual: True
