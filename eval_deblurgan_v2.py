@@ -29,7 +29,7 @@ class Validator:
 
     def validate(self, resume_train=False):
         self._init_params()
-        self.netG.load_state_dict(torch.load(self.config['model_path'])['model'])
+        self.netG.load_state_dict(torch.load(self.config['val']['model_path'])['model'])
         self._validate()
         torch.cuda.empty_cache()
 
