@@ -42,7 +42,7 @@ val:
   files_a1: data/TEST/GOPRO_Large/*/blur_gamma/*.png
   files_b0: data/TEST/GOPRO_Large/*/sharp/*.png
   files_b1: data/TEST/GOPRO_Large/*/sharp/*.png
-  model_path:
+  model_path: fpn_inception.h5
   size: *SIZE
   scope: geometric
   crop: center
