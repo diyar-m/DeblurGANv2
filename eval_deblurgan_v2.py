@@ -47,9 +47,11 @@ class Validator:
             inputs, targets = inputs.cuda(), targets.cuda()
             outputs = self.netG(inputs)
             curr_psnr, curr_ssim, img_for_vis = self.model.get_images_and_metrics(inputs, outputs, targets)
-            print("curr_psnr", curr_psnr)
-            print("curr_ssim", curr_ssim)
-            break
+            sum_psnr += curr_psnr
+            sum_ssim += curr_ssim
+            sum_lens += len(inputs)
+            if not i:
+                print(len(inputs))
             self.metric_counter.add_metrics(curr_psnr, curr_ssim)
             if not i%50:
                 self.metric_counter.add_image(img_for_vis, tag='val')
