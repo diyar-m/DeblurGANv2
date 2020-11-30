@@ -46,10 +46,6 @@ class Validator:
             inputs, targets = self.model.get_input(data)
             inputs, targets = inputs.cuda(), targets.cuda()
             outputs = self.netG(inputs)
-            loss_content = self.criterionG(outputs, targets)
-            loss_adv = self.adv_trainer.loss_g(inputs, outputs, targets)
-            loss_G = loss_content + self.adv_lambda * loss_adv
-            self.metric_counter.add_losses(loss_G.detach().item(), loss_content.detach().item())
             curr_psnr, curr_ssim, img_for_vis = self.model.get_images_and_metrics(inputs, outputs, targets)
             print("curr_psnr", curr_psnr)
             print("curr_ssim", curr_ssim)
