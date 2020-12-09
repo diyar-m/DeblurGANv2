@@ -30,7 +30,7 @@ class Trainer:
 
     def train(self):
         self._init_params()
-        self.netG.load_state_dict(torch.load('fpn_inception.h5')['model'])
+        self.netG.load_state_dict(torch.load('best_G_fpn.h5')['model'])
         self.netG.train(True)
 
         self._validate()
