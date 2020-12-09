@@ -58,7 +58,7 @@ model:
   blocks: 9
   d_name: double_gan # may be no_gan, patch_gan, double_gan, multi_scale
   d_layers: 3
-  content_loss: perceptualfpn_inception.h5
+  content_loss: perceptual
   adv_lambda: 0.01
   disc_loss: ragan-ls
   learn_residual: True
