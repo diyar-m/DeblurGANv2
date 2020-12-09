@@ -35,6 +35,9 @@ class DeblurModel(nn.Module):
             psnr += PSNR(fake, real)
             ssim += SSIM(fake, real, multichannel=True)
             vis_img = np.hstack((inp, fake, real))
+            print("psnr", psnr)
+            print("ssim", ssim)
+        exit()
         return psnr / len(inps), ssim / len(inps), vis_img
 
 
