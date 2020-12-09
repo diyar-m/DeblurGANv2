@@ -19,7 +19,6 @@ class DeblurModel(nn.Module):
     def tensor2im(self, image_tensor, imtype=np.uint8):
         image_numpy = image_tensor[0].cpu().float().numpy()
         image_numpy = (np.transpose(image_numpy, (1, 2, 0)) + 1) / 2.0 * 255.0
-        print(image_numpy.mean(), image_numpy.shape, image_numpy.max(), image_numpy.min())
         return image_numpy.astype(imtype)
 
     def get_images_and_metrics(self, inps, outputs, targets) -> (float, float, np.ndarray):
