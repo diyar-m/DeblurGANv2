@@ -51,7 +51,7 @@ val:
   bounds: [0, 1]
   corrupt: *CORRUPT
 
-phase: train
+#phase: train
 warmup_num: 3
 model:
   g_name: fpn_inception
