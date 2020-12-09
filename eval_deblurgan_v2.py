@@ -21,54 +21,47 @@ from schedulers import LinearDecay, WarmRestart
 cv2.setNumThreads(0)
 
 
-class Validator:
-    def __init__(self, config, val: DataLoader):
+class Trainer:
+    def __init__(self, config, train: DataLoader, val: DataLoader):
         self.config = config
+        self.train_dataset = train
         self.val_dataset = val
         self.metric_counter = MetricCounter()
 
-    def validate(self, resume_train=False):
+    def train(self):
         self._init_params()
-        self.netG.load_state_dict(torch.load(self.config['val']['model_path'])['model'])
+        self.netG.load_state_dict(torch.load('fpn_inception.h5')['model'])
         self._validate()
         torch.cuda.empty_cache()
+
+        print(self.metric_counter.loss_message())
 
     def _validate(self):
         self.metric_counter.clear()
         epoch_size = config.get('val_batches_per_epoch') or len(self.val_dataset)
         tq = tqdm.tqdm(self.val_dataset, total=epoch_size)
         tq.set_description('Validation')
-        sum_psnr = 0
-        sum_ssim = 0
-        sum_lens = 0
         i = 0
-        self.model.train(True)
         for data in tq:
             inputs, targets = self.model.get_input(data)
             inputs, targets = inputs.cuda(), targets.cuda()
             outputs = self.netG(inputs)
-            
             curr_psnr, curr_ssim, img_for_vis = self.model.get_images_and_metrics(inputs, outputs, targets)
-            print(curr_psnr)
-            sum_psnr += curr_psnr
-            sum_ssim += curr_ssim
-            sum_lens += len(inputs)
             self.metric_counter.add_metrics(curr_psnr, curr_ssim)
-            if not i%50:
+            if not i:
                 self.metric_counter.add_image(img_for_vis, tag='val')
             i += 1
-            # if i > epoch_size:
-            #     break
+            if i > epoch_size:
+                break
             del inputs, targets, outputs
             self.metric_counter.write_to_tensorboard(i, validation=True)
+            input()
 
         tq.close()
-        print("SSIM ", sum_ssim / sum_lens)
-        print("PSNR ", sum_psnr / sum_lens)
-        print("Dataset Length ", sum_lens)
+
 
     def _init_params(self):
-        self.netG, _ = get_nets(self.config['model'])
+        self.netG, netD = get_nets(self.config['model'])
         self.netG.cuda()
         self.model = get_model(self.config['model'])
 
@@ -87,9 +80,8 @@ if __name__ == '__main__':
     torch.manual_seed(0)
     get_dataloader = partial(DataLoader, batch_size=batch_size, num_workers=cpu_count(), shuffle=True, drop_last=True)
 
-    datasets = map(config.get, ('train', 'val'))
+    datasets = map(config.pop, ('train', 'val'))
     datasets = map(PairedDataset.from_config, datasets)
     train, val = map(get_dataloader, datasets)
-    validator = Validator(config, val=val)
-
-    validator.validate()
+    trainer = Trainer(config, train=train, val=val)
+    trainer.train()
