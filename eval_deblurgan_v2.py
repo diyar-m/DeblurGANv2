@@ -32,6 +32,8 @@ class Trainer:
         self._init_params()
         print(torch.load('fpn_inception.h5')['model'])
         self.netG.load_state_dict(torch.load('fpn_inception.h5')['model'])
+        self.netG.train(True)
+
         self._validate()
         torch.cuda.empty_cache()
 
