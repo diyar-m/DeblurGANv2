@@ -42,11 +42,14 @@ class Validator:
         sum_ssim = 0
         sum_lens = 0
         i = 0
+        self.model.train(True)
         for data in tq:
             inputs, targets = self.model.get_input(data)
             inputs, targets = inputs.cuda(), targets.cuda()
             outputs = self.netG(inputs)
+            
             curr_psnr, curr_ssim, img_for_vis = self.model.get_images_and_metrics(inputs, outputs, targets)
+            print(curr_psnr)
             sum_psnr += curr_psnr
             sum_ssim += curr_ssim
             sum_lens += len(inputs)
@@ -54,8 +57,8 @@ class Validator:
             if not i%50:
                 self.metric_counter.add_image(img_for_vis, tag='val')
             i += 1
-            if i > epoch_size:
-                break
+            # if i > epoch_size:
+            #     break
             del inputs, targets, outputs
             self.metric_counter.write_to_tensorboard(i, validation=True)
 
