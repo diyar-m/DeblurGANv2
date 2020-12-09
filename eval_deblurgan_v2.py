@@ -44,11 +44,19 @@ class Trainer:
         tq = tqdm.tqdm(self.val_dataset, total=epoch_size)
         tq.set_description('Validation')
         i = 0
+        total_psnr = 0
+        total_ssim = 0
+        total_samples = 0
         for data in tq:
             inputs, targets = self.model.get_input(data)
             inputs, targets = inputs.cuda(), targets.cuda()
             outputs = self.netG(inputs)
             curr_psnr, curr_ssim, img_for_vis = self.model.get_images_and_metrics(inputs, outputs, targets)
+
+            total_ssim += curr_ssim * len(inputs)
+            total_psnr += curr_psnr * len(inputs)
+            total_samples += len(inputs)
+
             self.metric_counter.add_metrics(curr_psnr, curr_ssim)
             if not i:
                 self.metric_counter.add_image(img_for_vis, tag='val')
@@ -57,7 +65,9 @@ class Trainer:
                 break
             self.metric_counter.write_to_tensorboard(i, validation=True)
             del inputs, targets, outputs
-            input()
+
+        print("PSNR", total_psnr/total_samples)
+        print("SSIM", total_ssim/total_samples)
 
         tq.close()
 
