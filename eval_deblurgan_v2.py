@@ -55,8 +55,8 @@ class Trainer:
             i += 1
             if i > epoch_size:
                 break
-            del inputs, targets, outputs
             self.metric_counter.write_to_tensorboard(i, validation=True)
+            del inputs, targets, outputs
             input()
 
         tq.close()
