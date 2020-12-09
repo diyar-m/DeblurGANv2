@@ -45,6 +45,7 @@ class DeblurModel(nn.Module):
             print("psnr", PSNR(fake, real))
             print("ssim", SSIM(fake, real, multichannel=True))
         print('========================')
+        print("len(inps)", len(inps))
         return psnr / len(inps), ssim / len(inps), vis_img
 
 
