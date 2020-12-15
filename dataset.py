@@ -128,6 +128,9 @@ class PairedDataset(Dataset):
             files_a += glob("data/TRAIN/quantitative_datasets/*/input/*.jpg")
             files_b += glob("data/TRAIN/quantitative_datasets/*/GT/*.jpg")
 
+            files_a += glob("data/TRAIN/REDS_train/train_blur/*/*.png")
+            files_b += glob("data/TRAIN/REDS_train/train_sharp/*/*.png")
+
             for i in range(4):
                 files_a += sorted(glob("data/TRAIN/synthetic_dataset/uniform/*0{}.png".format(i+1)))
                 files_b += sorted(glob("data/TRAIN/synthetic_dataset/ground_truth/*.png"))
@@ -138,8 +141,8 @@ class PairedDataset(Dataset):
         elif config['phase'] == "val":
             files_a += glob("data/TEST/GOPRO_Large/*/blur/*.png")
             files_b += glob("data/TEST/GOPRO_Large/*/sharp/*.png")
-            files_a += glob("data/TEST/GOPRO_Large/*/blur_gamma/*.png")
-            files_b += glob("data/TEST/GOPRO_Large/*/sharp/*.png")
+            # files_a += glob("data/TEST/GOPRO_Large/*/blur_gamma/*.png")
+            # files_b += glob("data/TEST/GOPRO_Large/*/sharp/*.png")
 
         # files_a, files_b = map(lambda x: sorted(glob(config[x], recursive=True)), ('files_a', 'files_b'))
         transform_fn = aug.get_transforms(size=config['size'], scope=config['scope'], crop=config['crop'])

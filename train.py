@@ -149,6 +149,7 @@ class Trainer:
             inputs, targets = self.model.get_input(data)
             inputs, targets = inputs.cuda(), targets.cuda()
             outputs = self.netG(inputs)
+            # Checked
             loss_content = self.criterionG(outputs, targets)
             loss_adv = self.adv_trainer.loss_g(inputs, outputs, targets)
             loss_G = loss_content + self.adv_lambda * loss_adv
@@ -169,6 +170,7 @@ class Trainer:
         if self.config['model']['d_name'] == 'no_gan':
             return 0
         self.optimizer_D.zero_grad()
+        # Checked
         loss_D = self.adv_lambda * self.adv_trainer.loss_d(inputs, outputs, targets)
         loss_D.backward(retain_graph=True)
         self.optimizer_D.step()

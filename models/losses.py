@@ -209,7 +209,7 @@ class RelativisticDiscLossLS(nn.Module):
         self.pred_real = net.forward(self.real_AB)
         self.real_pool.add(self.pred_real)
 
-        # Combined loss
+        # Combined loss # Checked
         self.loss_D = (torch.mean((self.pred_real - torch.mean(self.fake_pool.query()) - 1) ** 2) +
                        torch.mean((self.pred_fake - torch.mean(self.real_pool.query()) + 1) ** 2)) / 2
         return self.loss_D

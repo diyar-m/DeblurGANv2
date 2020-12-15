@@ -62,12 +62,12 @@ model:
   adv_lambda: 0.01
   disc_loss: ragan-ls
   learn_residual: True
-  norm_layer: instance
+  norm_layer: instanc
   dropout: True
 
 num_epochs: 300
 train_batches_per_epoch: 250
-val_batches_per_epoch: 50
+val_batches_per_epoch: 100
 batch_size: 6
 image_size: [256, 256]
 
