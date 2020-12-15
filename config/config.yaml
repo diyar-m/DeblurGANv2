@@ -62,7 +62,7 @@ model:
   adv_lambda: 0.01
   disc_loss: ragan-ls
   learn_residual: True
-  norm_layer: instanc
+  norm_layer: instance
   dropout: True
 
 num_epochs: 300
