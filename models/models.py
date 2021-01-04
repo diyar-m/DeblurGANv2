@@ -32,7 +32,7 @@ class DeblurModel(nn.Module):
             print(inps[i:i + 1].shape)
             print(outputs[i:i + 1].shape)
             print(targets[i:i + 1].shape)
-            inp = self.tensor2im(inp)
+            inp = self.tensor2im(inp.data)
             fake = self.tensor2im(output.data)
             real = self.tensor2im(target.data)
             psnr += PSNR(fake, real)
