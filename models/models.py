@@ -25,7 +25,7 @@ class DeblurModel(nn.Module):
         psnr = 0
         ssim = 0
         for i in range(len(inps)):
-            input("i:", i)
+            input(f"{i}:")
             inp = inps[i:i + 1]
             output = outputs[i:i + 1]
             target = targets[i:i + 1]
