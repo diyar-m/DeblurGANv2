@@ -57,8 +57,8 @@ class Trainer:
 
             print("Metrcis:", curr_psnr, curr_ssim)
             print("Totals:", total_ssim, total_psnr, total_samples)
-            print("nan:", torch.isnan(img_for_vis).byte().any())
-            print("inf:", torch.isinf(img_for_vis).byte().any())
+            print("nan:", np.isnan(img_for_vis).any())
+            print("inf:", np.isinf(img_for_vis).any())
             self.metric_counter.add_metrics(curr_psnr, curr_ssim)
             if not i:
                 self.metric_counter.add_image(img_for_vis, tag='val')
