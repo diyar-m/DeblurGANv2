@@ -22,9 +22,8 @@ cv2.setNumThreads(0)
 
 
 class Trainer:
-    def __init__(self, config, train: DataLoader, val: DataLoader):
+    def __init__(self, config, val: DataLoader):
         self.config = config
-        self.train_dataset = train
         self.val_dataset = val
         self.metric_counter = MetricCounter()
 
@@ -94,8 +93,8 @@ if __name__ == '__main__':
     torch.manual_seed(0)
     get_dataloader = partial(DataLoader, batch_size=batch_size, num_workers=cpu_count(), shuffle=True, drop_last=True)
 
-    datasets = map(config.pop, ('train', 'val'))
-    datasets = map(PairedDataset.from_config, datasets)
-    train, val = map(get_dataloader, datasets)
-    trainer = Trainer(config, train=train, val=val)
+    dataset = config.pop('val')
+    dataset = PairedDataset.from_config(dataset)
+    val = get_dataloader(dataset)
+    trainer = Trainer(config, val=val)
     trainer.train()
