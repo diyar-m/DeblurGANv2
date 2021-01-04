@@ -77,12 +77,14 @@ class Trainer:
         self.netG.cuda()
         self.model = get_model(self.config['model'])
 
+
 def set_seed(seed):
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
     np.random.seed(seed)
+
 
 if __name__ == '__main__':
     with open('config/config.yaml', 'r') as f:

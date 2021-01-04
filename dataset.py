@@ -139,8 +139,8 @@ class PairedDataset(Dataset):
                 files_b += sorted(glob("data/TRAIN/synthetic_dataset/ground_truth/*.png"))
 
         elif config['phase'] == "val":
-            files_a += glob("../data/TEST/GOPRO_Large/*/blur/*.png")
-            files_b += glob("../data/TEST/GOPRO_Large/*/sharp/*.png")
+            files_a += glob("data/TEST/GOPRO_Large/*/blur/*.png")
+            files_b += glob("data/TEST/GOPRO_Large/*/sharp/*.png")
             # files_a += glob("data/TEST/GOPRO_Large/*/blur_gamma/*.png")
             # files_b += glob("data/TEST/GOPRO_Large/*/sharp/*.png")
 
