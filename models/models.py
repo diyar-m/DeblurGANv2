@@ -25,23 +25,15 @@ class DeblurModel(nn.Module):
         psnr = 0
         ssim = 0
         for i in range(len(inps)):
-            input(f"{i}:")
             inp = inps[i:i + 1]
             output = outputs[i:i + 1]
             target = targets[i:i + 1]
-            print(inps[i:i + 1].shape)
-            print(outputs[i:i + 1].shape)
-            print(targets[i:i + 1].shape)
             inp = self.tensor2im(inp.data)
             fake = self.tensor2im(output.data)
             real = self.tensor2im(target.data)
-            print("tensor2im")
             psnr += PSNR(fake, real)
-            print("PSNR")
             ssim += SSIM(fake, real, multichannel=True)
-            print("SSIM")
             vis_img = np.hstack((inp, fake, real))
-            print("hstack")
 
         return psnr / len(inps), ssim / len(inps), vis_img
 
