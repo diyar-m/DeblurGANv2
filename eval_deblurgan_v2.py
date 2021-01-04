@@ -51,11 +51,14 @@ class Trainer:
             inputs, targets = inputs.cuda(), targets.cuda()
             outputs = self.netG(inputs)
             curr_psnr, curr_ssim, img_for_vis = self.model.get_images_and_metrics(inputs, outputs, targets)
-            print("Metrics!")
             total_ssim += curr_ssim * len(inputs)
             total_psnr += curr_psnr * len(inputs)
             total_samples += len(inputs)
-            print("Totals")
+
+            print("Metrcis:", curr_psnr, curr_ssim)
+            print("Totals:", total_ssim, total_psnr, total_samples)
+            print("nan:", torch.isnan(img_for_vis).byte().any())
+            print("inf:", torch.isinf(img_for_vis).byte().any())
             self.metric_counter.add_metrics(curr_psnr, curr_ssim)
             if not i:
                 self.metric_counter.add_image(img_for_vis, tag='val')
