@@ -29,7 +29,7 @@ class DeblurModel(nn.Module):
             inp = inps[i:i + 1]
             output = outputs[i:i + 1]
             target = targets[i:i + 1]
-            print(inp[i:i + 1].shape)
+            print(inps[i:i + 1].shape)
             print(outputs[i:i + 1].shape)
             print(targets[i:i + 1].shape)
             inp = self.tensor2im(inp)
