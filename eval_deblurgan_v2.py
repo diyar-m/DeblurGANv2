@@ -21,7 +21,7 @@ from schedulers import LinearDecay, WarmRestart
 cv2.setNumThreads(0)
 
 
-class Trainer:
+class Validator:
     def __init__(self, config, val: DataLoader):
         self.config = config
         self.val_dataset = val
