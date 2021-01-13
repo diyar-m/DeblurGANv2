@@ -52,8 +52,8 @@ class PairedDataset(Dataset):
     def __init__(self,
                  files_a: Tuple[str],
                  files_b: Tuple[str],
-                 transform_fn: Callable,
-                 normalize_fn: Callable,
+                 transform_fn: Callable = None,
+                 normalize_fn: Callable = None,
                  corrupt_fn: Optional[Callable] = None,
                  preload: bool = True,
                  preload_size: Optional[int] = 0,
@@ -108,7 +108,8 @@ class PairedDataset(Dataset):
         a, b = self.data_a[idx], self.data_b[idx]
         if not self.preload:
             a, b = map(_read_img, (a, b))
-        a, b = self.transform_fn(a, b)
+        if self.transform_fn:
+            a, b = self.transform_fn(a, b)
         if self.corrupt_fn is not None:
             a = self.corrupt_fn(a)
         a, b = self._preprocess(a, b)

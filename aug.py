@@ -30,12 +30,14 @@ def get_transforms(size: int, scope: str = 'geometric', crop='random'):
                                      ])
             }
 
-    aug_fn = augs[scope]
     crop_fn = {'random': albu.RandomCrop(size, size, always_apply=True),
                'center': albu.CenterCrop(size, size, always_apply=True)}[crop]
     pad = albu.PadIfNeeded(size, size)
-
-    pipeline = albu.Compose([aug_fn, crop_fn, pad], additional_targets={'target': 'image'})
+    if scope == "nothing":
+        pipeline = albu.Compose([crop_fn, pad], additional_targets={'target': 'image'})
+    else:
+        aug_fn = augs[scope]
+        pipeline = albu.Compose([aug_fn, crop_fn, pad], additional_targets={'target': 'image'})
 
     def process(a, b):
         r = pipeline(image=a, target=b)

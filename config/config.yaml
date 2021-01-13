@@ -44,7 +44,7 @@ val:
 #  files_b1: data/TEST/GOPRO_Large/*/sharp/*.png
   model_path: fpn_inception.h5
   size: *SIZE
-  scope: geometric
+  scope: nothing
   crop: center
   preload: *PRELOAD
   preload_size: *PRELOAD_SIZE

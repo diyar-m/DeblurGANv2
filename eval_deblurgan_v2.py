@@ -27,7 +27,7 @@ class Trainer:
         self.val_dataset = val
         self.metric_counter = MetricCounter()
 
-    def train(self):
+    def validate(self):
         self._init_params()
         self.netG.load_state_dict(torch.load('best_G_fpn.h5')['model'])
         self.netG.train(True)
@@ -99,5 +99,5 @@ if __name__ == '__main__':
     dataset = config.pop('val')
     dataset = PairedDataset.from_config(dataset)
     val = get_dataloader(dataset)
-    trainer = Trainer(config, val=val)
-    trainer.train()
+    validator = Validator(config, val=val)
+    validator.validate()
